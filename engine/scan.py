@@ -42,6 +42,18 @@ class scan:
     # setFiles의 파일들 하나하나 요청 보내는 메소드
     def requestFiles(self, URL, target): 
         request_idx = 1
+        
+        # dict 타입은 귀찮으니까... 난 list가 좋더라
+        result1 = [] # 200 응답이 아닌 경우
+        result2 = [] # p 태그 내 안내 문구 출력과 함께 접근 불가한 경우
+        result3 = [] # 응답 내용이 없는 경우
+        result4 = [] # 응답 내용이 긴 경우
+        result5 = [] # 그 외 위 조건에 맞지 않는 응답
+        resultAll = [] # 전체 응답
+        resultIdx = ['status_code error', 'Access denied', 'No reponse', 'Response is too long', 'etc']
+        idxs = 1
+        
+        # 요청 보내기
         for _ in target:
             print('_' * 50 + '\n[*] (%s/%s) Request to %s'%(request_idx, len(target), _))
             response = requests.get(URL + _)
@@ -49,25 +61,44 @@ class scan:
             # 200 응답이 아닌 경우
             if (response.status_code != 200): 
                 print('[>>>] Response is bad %s'%response.status_code)
+                result1.append(_)
                 
             # p 태그 내 안내 문구 출력과 함께 접근 불가한 경우
             elif ('<p class="cbg">' in response.text): 
                 print(self.getPtag(response.text))
+                result2.append(_)
                 
             # 응답 내용이 없는 경우
             elif(response.text == '' or response.text == '0'): 
                 print('[>>>] No response')
+                result3.append(_)
             
             # 응답 내용이 긴 경우
             elif(len(response.text) > 50): 
                 print('[>>>] The length of response is too big -> [%s]'%len(response.text))
+                result4.append(_)
                 
             # 그 외 위 조건에 맞지 않는 응답
             else : 
                 print(response.text)
+                result5.append(_)
             
             time.sleep(0.5)
             request_idx += 1
+            
+        # 모든 응답을 정리하자
+        resultAll.append(result1)
+        resultAll.append(result2)
+        resultAll.append(result3)
+        resultAll.append(result4)
+        resultAll.append(result5)
+                
+        # 스캔 결과 출력
+        for _ in resultAll:
+            print('_' * 50)
+            print('[*] %s %s files'%(resultIdx[idxs - 1], len(_)))
+            print(_)
+            idxs += 1
             
     # 이니시를 걸자
     def __init__(self, URL, scan):
@@ -93,7 +124,7 @@ class scan:
                 dir = './gnuboard5-master/' 
                 
                 # 스캔할 폴더, 추후 다운받은 그누보드에서 디렉토리 다 뽑아서 넣을 예정
-                self.scan_dirs = ['', 'bbs/', 'adm/'] 
+                self.scan_dirs = [''] 
                 
                 # requestFiles(크롤링 URL, 크롤링 대상 파일 List),   setFiles(요청 보낼 파일 경로, 중에 어떤 폴더 요청할지)
                 self.requestFiles(URL, self.setFiles(dir, self.scan_dirs)) 
