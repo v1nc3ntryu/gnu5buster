@@ -19,11 +19,11 @@ def printLogo():
 # 명령 인자 정리
 def initParser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--url', '-u', action ='store', help='Target URL')
+    parser.add_argument('--url', '-u', action ='store', type=str, help='Target URL')
     parser.add_argument('--scan', '-s', action ='store', type=int, default='3', help='Which scan do you want? (1. Picky scan, 2. Scan everything, 3. Skip scans)')
-    parser.add_argument('--xss', '-x', action ='store', default='n', help='Do you want to check xss points? (y/n)')
-    parser.add_argument('--inject', '-i', action ='store', default='n', help='Do you want to check SQLi points? (y/n)')
-    parser.add_argument('--bypass', '-b', action ='store', default='n', help='Do you want to check Bypass points? (y/n)')
+    parser.add_argument('--xss', '-x', action ='store', type=str, default='n', help='Do you want to check xss points? (y/n)')
+    parser.add_argument('--inject', '-i', action ='store', type=str, default='n', help='Do you want to check SQLi points? (y/n)')
+    parser.add_argument('--bypass', '-b', action ='store', type=str, default='n', help='Do you want to check Bypass points? (y/n)')
     return parser.parse_args()
 
 # 시작!!
